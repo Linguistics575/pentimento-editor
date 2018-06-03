@@ -1,0 +1,177 @@
+<html>
+<meta charset="utf-8"/>
+<style>
+img {
+    max-width: 100%;
+    max-height: 140vh;
+    height: auto;
+}
+body, html {
+  margin: 0;
+  overflow: hidden;
+  height:100%;
+}
+
+@media (min-width: 768px){
+  #left {
+    position: absolute;
+    top: 0px;
+    bottom: 0;
+    left: 0;
+    width: 50%;
+    overflow-y: scroll; 
+  }
+  
+  #right {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    overflow-y: scroll;
+    width: 50%;
+  }
+}
+
+#left {
+  height:100%;
+}
+
+#right {
+  height:100%;
+}
+</style>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
+<script src="tinymce/js/tinymce/tinymce.min.js"></script>
+<script src='https://code.responsivevoice.org/responsivevoice.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/oauth-io/0.6.2/oauth.min.js'></script>
+<script src="GitHub.bundle.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
+<script>
+    var repo = null;
+    OAuth.initialize('VnRodo6ycABEgsuWx0LF7BBgO-I');
+    var provider = 'github';
+
+    OAuth.popup(provider)
+    .done(function(result) {
+        var gh = new GitHub({
+            token: result.access_token
+        });
+        repo = gh.getRepo('tguinard', 'test');
+        tinymce.init({ 
+            selector:'textarea', 
+            plugins: "autoresize textcolor",
+            toolbar: "forecolor",
+            menubar: false,
+            force_br_newlines : true,
+            force_p_newlines : false,
+            forced_root_block : '',
+            init_instance_callback: function() {
+                $('#page').change(newPage);
+                $('#book').change(newPage);
+                newPage();
+            }
+        });
+    })
+    .fail(function (err) {
+        console.error(err);
+    });
+
+    function saveme() {
+        if (repo) {
+            var page = $('#page').val();
+            var book = $('#book').val();
+            var content = (tinyMCE.activeEditor.getContent({ format: "raw" }));
+            content = content.replace(/<br\/?>/g, '<br/>\n');
+            repo.writeFile("master", book + "/htmls/" + page + ".html", content, "Save via editor interface", {}, function(error, result, request){
+                if (error) {
+                    bootstrapError("Could not save: " + error);
+                }
+            }).catch(function(error) {
+                bootstrapError("Could not save: " + error);
+            }).then(function(){
+                //also export as text
+                var textcontent = (tinyMCE.activeEditor.getContent({ format: "text" }));
+                repo.writeFile("master", book + "/txts/" + page + ".txt", textcontent, "Save via editor interface", {}, function(error, result, request){
+                    if (!error) {
+                        bootstrapSuccess("Successfully saved page " + page);
+                    }
+                    else {
+                        bootstrapError("Could not save as text: " + error);
+                    }
+                }).catch(function(error) {
+                    bootstrapError("Could not save as text: " + error);
+                })
+            });
+        }
+    }
+
+    function newPage() {
+        var page = $('#page').val();
+        var book = $('#book').val();
+        document.getElementById('book-image').src = (book + '/pngs/' + page + '.png');
+        repo.getContents('master', book + '/htmls/' + page + '.html', false, function(error, result, request){
+            var content = result.content || 'no content';
+            var activeEditor = tinyMCE.activeEditor;
+            activeEditor.setContent((b64DecodeUnicode(content)));
+        });
+    }
+
+    function bootstrapSuccess(message) {
+        $('#alert_placeholder').html('<div class="alert alert-success"><a class="close" data-dismiss="alert">×</a><span>'+message+'</span></div>')
+        timeout();
+    }
+
+    function bootstrapError(message) {
+        $('#alert_placeholder').html('<div class="alert alert-danger"><a class="close" data-dismiss="alert">×</a><span>'+message+'</span></div>')
+    }
+
+    function timeout() {
+        window.setTimeout(function() {
+            $(".alert").slideUp(500, function(){
+                $(this).remove(); 
+            });
+        }, 3000);
+    }
+
+    function b64DecodeUnicode(str) {
+        return decodeURIComponent(Array.prototype.map.call(atob(str), function(c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+        }).join(''))
+    }
+</script>
+<body>
+    <div class="row">
+    <div class="col-md-6" style="heigh:100%" id='left'>
+        <div id="alert_placeholder"></div>
+        <div class="row-fluid input-group pb-2">
+            <p>Book&nbsp;</p>
+            <select id="book">
+                <option value="1872-etzensberger-up-nile-by-steam-cook">1872-etzensberger-up-nile-by-steam-cook</option>
+                <option value="1884-rudolph-travels-in-east">1884-rudolph-travels-in-east</option>
+                <option value="1885-baedekers-lower-egypt">1885-baedekers-lower-egypt</option>
+                <option value="1889-sandwith-egypt-as-winter-resort">1889-sandwith-egypt-as-winter-resort</option>
+                <option value="1892-baedeker-egypt_upper_egypt">1892-baedeker-egypt_upper_egypt</option>
+            </select>
+            <p>Page&nbsp;</p>
+            <input type="number" id="page" min="1" max="176" step="1" value="1" class="form-control bfh-number">
+            <label>&nbsp;Changing the page will reset unsaved edits!</label>
+        </div>
+        <div class="row">
+            <div class='pull-left col-md-6'>
+                <input onclick='responsiveVoice.speak(tinyMCE.activeEditor.getContent({ format: "text" }));' type='button' value='Read out loud' class='btn btn-info' />
+                <input onclick='responsiveVoice.cancel();' type='button' value='Stop' class='btn btn-danger' />
+            </div>
+            <div class='pull-right col-md-6' style="text-align:right">
+                <input onclick='saveme()' id='save' type='button' value='Save' class='btn btn-success'/>
+            </div>
+        </div>
+        <textarea id='ocr-text'>
+        </textarea>
+    </div>
+    <div class="col-md-6" id='right'>
+        <img id='book-image' alt="Image of book page">
+    </div>
+    </div>
+</body>
+</html>
