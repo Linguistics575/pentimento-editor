@@ -1,4 +1,4 @@
-This repository contains code to host the site https://linguistics575.github.io/pentimento-editor/
+This repository contains code to host the site https://pentimenti.github.io/
 
 This website is for editing the output of OCR text (text automatically transcribed via software) in order to produce an accurate transcription of a book.
 
@@ -6,7 +6,9 @@ This website is for editing the output of OCR text (text automatically transcrib
 
 In order to view and edit the website, you need to sign in with your github account. If you don't have a github account, please sign up here: https://github.com/
 
-When you first navigate to https://linguistics575.github.io/pentimento-editor/, there will be a popup for sign-in. Please tell your browser to allow popups if it blocks the popup.
+Next, you will need to get write access to this repository. To do so, please contact an administrator of pentimenti organization (tguinard@gmail.com will work), and let them know your github username.
+
+When you first navigate to https://pentimenti.github.io/, there will be a popup for sign-in. Please tell your browser to allow popups if it blocks the popup.
 
 # How to edit a book
 
