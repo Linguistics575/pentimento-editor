@@ -32,6 +32,70 @@ You should check with your project supervisor on specific requirements for your 
 
 # How to download the edited text
 
+Updated edited text is located in this repository under bookname/txts. For example [1872-etzensberger-up-nile-by-steam-cook/txts](https://github.com/pentimenti/pentimenti.github.io/tree/master/1872-etzensberger-up-nile-by-steam-cook/txts)
+
+If you don't know git commands, the easiest way to download text files is to navigate to the top of this page, under the green "Clone or download" button, choose to download zip. After you download, you will have a folder that has the same structure as this website.
+
 # How to add a book to this project
 
+*The rest of this README assumes you have technical knowledge*
+
+You need to add a new data folder, and a new dropdown option in index.html
+
+You need to add these directories, where "mybook" is the name of your new book
+* mybook/htmls/
+* mybook/pngs/
+* mybook/txts/ (not strictly required, but recommended)
+
+Please follow the naming conventions. See [this folder](https://github.com/pentimenti/pentimenti.github.io/tree/master/1872-etzensberger-up-nile-by-steam-cook) for example:
+* 1.html, 2.html, ...
+* 1.png, 2.png, ...
+* 1.txt, 2.txt, ...
+
+See the [pentimento README](https://github.com/Linguistics575/pentimento#post-ocr-editing-interface-1) on how you can use our sister project to generate editable output from a PDF.
+
+Please try to keep this repository under 1GB per github's [recommendation](https://help.github.com/articles/what-is-my-disk-quota/). Currently, that's about 4 books. If you really want more, push for someone to look at [this issue](https://github.com/pentimenti/pentimenti.github.io/issues/1).
+
+Next, edit index.html in order to make your change viewable in the editor. Change the code that looks like this
+```
+            <select id="book">
+                <option value="1872-etzensberger-up-nile-by-steam-cook">1872-etzensberger-up-nile-by-steam-cook</option>
+                <option value="1885-baedekers-lower-egypt">1885-baedekers-lower-egypt</option>
+                <option value="1889-sandwith-egypt-as-winter-resort">1889-sandwith-egypt-as-winter-resort</option>
+                <option value="1892-baedeker-egypt_upper_egypt">1892-baedeker-egypt_upper_egypt</option>
+            </select>
+```
+To this (if the name of your book is "mybook")
+```
+            <select id="book">
+                <option value="1872-etzensberger-up-nile-by-steam-cook">1872-etzensberger-up-nile-by-steam-cook</option>
+                <option value="1885-baedekers-lower-egypt">1885-baedekers-lower-egypt</option>
+                <option value="1889-sandwith-egypt-as-winter-resort">1889-sandwith-egypt-as-winter-resort</option>
+                <option value="1892-baedeker-egypt_upper_egypt">1892-baedeker-egypt_upper_egypt</option>
+                <option value="mybook">mybook</option>
+            </select>
+```
+
 # How to move this project to some other github repository
+
+General steps:
+* You will need to change any code in [index.html](https://github.com/pentimenti/pentimenti.github.io/blob/master/index.html) that makes assumptions about the name of the repository.
+* The administrator of the new repo should ensure Github pages is allowed for this repo (Settings -> options -> Github Pages)
+
+If you want to keep the same OAuth config:
+* In order for OAuth (signing in via github) to work, you should ask [Theresa](mailto:tguinard@gmail.com) to add your new website url to the list of allowed domains.
+
+If you want to use your own OAuth:
+* Create a github oauth app [here](https://github.com/settings/developers). The homepage url is your new website (https://orgname.github.io or https://orgname.github.io/path). The authorization callback url should be https://oauth.io/auth 
+* Create an account on [oauth.io](https://oauth.io/). 
+* Navigate to https://oauth.io/dashboard -> Integrated APIs -> +Add APIs -> select "github"
+* Add the webpage url (https://orgname.github.io or https://orgname.github.io/path) to "Domains & URLs whitelist" (under "General" tab)
+* In index.html, replace "VnRodo6ycABEgsuWx0LF7BBgO-I" with the value under "Public key"
+
+# JavaScript libraries used in this project
+* [Github.js](https://github.com/github-tools/github)
+* [Oauth js](https://github.com/oauth-io/oauth-js)
+* [Responsive Voice](https://responsivevoice.org/)
+* [Tiny MCE](https://www.tinymce.com/)
+* [Bootstrap](https://getbootstrap.com/)
+* [jQuery](https://jquery.com/)
