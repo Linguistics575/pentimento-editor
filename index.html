@@ -58,6 +58,10 @@ body, html {
             token: result.access_token
         });
         repo = gh.getRepo('pentimenti', 'pentimenti.github.io');
+    })
+    initTinyMce();
+
+    function initTinyMce() {
         tinymce.init({ 
             selector:'textarea', 
             plugins: "autoresize textcolor",
@@ -72,12 +76,7 @@ body, html {
                 newPage();
             }
         });
-    })
-    .fail(function (err) {
-        $('#page').change(newPage);
-        $('#book').change(newPage);
-        newPage();
-    });
+    }
 
     function saveme() {
         if (repo) {
