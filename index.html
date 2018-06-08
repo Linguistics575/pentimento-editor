@@ -104,17 +104,41 @@ body, html {
                 })
             });
         }
+        else {
+            bootstrapError("You must be signed in to save");
+        }
     }
 
     function newPage() {
         var page = $('#page').val();
         var book = $('#book').val();
         document.getElementById('book-image').src = (book + '/pngs/' + page + '.png');
-        repo.getContents('master', book + '/htmls/' + page + '.html', false, function(error, result, request){
-            var content = result.content || 'no content';
-            var activeEditor = tinyMCE.activeEditor;
-            activeEditor.setContent((b64DecodeUnicode(content)));
-        });
+        if (repo) {
+            repo.getContents('master', book + '/htmls/' + page + '.html', false, function(error, result, request){
+                var content = result.content || 'no content';
+                var activeEditor = tinyMCE.activeEditor;
+                activeEditor.setContent((b64DecodeUnicode(content)));
+            });
+        }
+        else {
+            var activeEditor = tinyMCE.get('ocr-text');
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', 'htmls/' + page + '.html', true);
+            xhr.onreadystatechange= function() {
+                var content = '';
+                if (this.readyState!==4) {
+                    content = 'Error loading data: ready state is not 4';
+                }
+                else if (this.status!==200) {
+                    content = 'Error loading data: http status is not 200';
+                }
+                else {
+                    content = this.responseText;
+                }
+                activeEditor.setContent(content);
+            };
+            xhr.send();
+        }
     }
 
     function bootstrapSuccess(message) {
