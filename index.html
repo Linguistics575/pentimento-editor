@@ -86,10 +86,20 @@ body, html {
             content = content.replace(/<br\/?>/g, '<br/>\n');
             repo.writeFile("master", book + "/htmls/" + page + ".html", content, "Save via editor interface", {}, function(error, result, request){
                 if (error) {
-                    bootstrapError("Could not save: " + error);
+                    if (error.includes("404 error")) {
+                        bootstrapError("Could not save: You must have write permission. See here for how to get permission: https://github.com/pentimenti/pentimenti.github.io#getting-started");
+                    }
+                    else {
+                        bootstrapError("Could not save: " + error);
+                    }
                 }
             }).catch(function(error) {
-                bootstrapError("Could not save: " + error);
+                if (error.includes("404 error")) {
+                    bootstrapError("Could not save: You must have write permission. See here for how to get permission: https://github.com/pentimenti/pentimenti.github.io#getting-started");
+                }
+                else {
+                    bootstrapError("Could not save: " + error);
+                }
             }).then(function(){
                 //also export as text
                 var textcontent = (tinyMCE.activeEditor.getContent({ format: "text" }));
@@ -98,15 +108,25 @@ body, html {
                         bootstrapSuccess("Successfully saved page " + page);
                     }
                     else {
-                        bootstrapError("Could not save as text: " + error);
+                        if (error.includes("404 error")) {
+                            bootstrapError("Could not save as text: You must have write permission. See here for how to get permission: https://github.com/pentimenti/pentimenti.github.io#getting-started");
+                        }
+                        else {
+                            bootstrapError("Could not save as text: " + error);
+                        }
                     }
                 }).catch(function(error) {
-                    bootstrapError("Could not save as text: " + error);
+                    if (error.includes("404 error")) {
+                        bootstrapError("Could not save as text: You must have write permission. See here for how to get permission: https://github.com/pentimenti/pentimenti.github.io#getting-started");
+                    }
+                    else {
+                        bootstrapError("Could not save as text: " + error);
+                    }
                 })
             });
         }
         else {
-            bootstrapError("You must be signed in to save");
+            bootstrapError("You must be signed in to save. Refresh the page and sign in via the popup");
         }
     }
 
@@ -117,7 +137,12 @@ body, html {
         if (repo) {
             repo.getContents('master', book + '/htmls/' + page + '.html', false, function(error, result, request){
                 if (error) {
-                    bootstrapError('' + error);
+                    if (error.includes('404 error') {
+                        bootstrapError('Page ' + page + ' of ' + book + ' does not exist');
+                    }
+                    else {
+                        bootstrapError('' + error);
+                    }
                 }
                 var content = result.content || 'no content';
                 var activeEditor = tinyMCE.activeEditor;
