@@ -117,7 +117,7 @@ body, html {
         if (repo) {
             repo.getContents('master', book + '/htmls/' + page + '.html', false, function(error, result, request){
                 if (error) {
-                    console.log(error);
+                    bootstrapError('' + error);
                 }
                 var content = result.content || 'no content';
                 var activeEditor = tinyMCE.activeEditor;
@@ -134,7 +134,7 @@ body, html {
                     bootstrapError('Page ' + page + ' of ' + book + ' does not exist');
                 }
                 else if (this.readyState!==4) {
-                    bootstrapError('Error loading data: ready state is not 4');
+                    //not an error
                 }
                 else if (this.status!==200) {
                     bootstrapError('Error loading data: http status ' + this.status);
