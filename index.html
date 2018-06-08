@@ -125,7 +125,7 @@ body, html {
         else {
             var activeEditor = tinyMCE.get('ocr-text');
             var xhr = new XMLHttpRequest();
-            xhr.open('GET', 'htmls/' + page + '.html', true);
+            xhr.open('GET', book + '/htmls/' + page + '.html', true);
             xhr.onreadystatechange= function() {
                 var content = '';
                 if (this.readyState!==4) {
