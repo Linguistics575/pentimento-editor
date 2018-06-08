@@ -116,6 +116,9 @@ body, html {
         document.getElementById('book-image').src = (book + '/pngs/' + page + '.png');
         if (repo) {
             repo.getContents('master', book + '/htmls/' + page + '.html', false, function(error, result, request){
+                if (error) {
+                    console.log(error);
+                }
                 var content = result.content || 'no content';
                 var activeEditor = tinyMCE.activeEditor;
                 activeEditor.setContent((b64DecodeUnicode(content)));
@@ -127,11 +130,14 @@ body, html {
             xhr.open('GET', book + '/htmls/' + page + '.html', true);
             xhr.onreadystatechange= function() {
                 var content = '';
-                if (this.readyState!==4) {
-                    content = 'Error loading data: ready state is not 4';
+                if (this.status == 404) {
+                    bootstrapError('Page ' + page + ' of ' + book + ' does not exist');
+                }
+                else if (this.readyState!==4) {
+                    bootstrapError('Error loading data: ready state is not 4');
                 }
                 else if (this.status!==200) {
-                    content = 'Error loading data: http status is not 200';
+                    bootstrapError('Error loading data: http status ' + this.status);
                 }
                 else {
                     content = this.responseText;
